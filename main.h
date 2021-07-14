@@ -11,7 +11,7 @@
 
 #define CLK_DIV_BAUD 	((u32*) (BRAM_WRITE_BASE_ADDRESS + 4*(0x00)))
 #define TX_BUF_DATA 	((u32*) (BRAM_WRITE_BASE_ADDRESS + 4*(0x01)))
-#define LEDS		 	((u32*) (BRAM_WRITE_BASE_ADDRESS + 4*(0x02)))
+#define LEDS		 	    ((u32*) (BRAM_WRITE_BASE_ADDRESS + 4*(0x02)))
 #define SEVEN_SEGW		((u32*) (BRAM_WRITE_BASE_ADDRESS + 4*(0x03)))
 
 #define RX_BUF_EMTY 	((u32*) (BRAM_READ_BASE_ADDRESS + 4*(0x00)))
@@ -21,9 +21,9 @@
 /*
  * For MCP4725:
  */
-#define MCP4725_DEV_ADDRESS					0x62 //A0 is logic zero, wired to the ground. 0x63 if its logic 1.
-#define MCP4725_WRITEDAC_ADDRESS			0x40
-#define MCP4725_WRITEDACEEPROM_ADDRESS		0x60
+#define MCP4725_DEV_ADDRESS					    0x62 //A0 is logic zero, wired to the ground. 0x63 if its logic 1.
+#define MCP4725_WRITEDAC_ADDRESS			  0x40
+#define MCP4725_WRITEDACEEPROM_ADDRESS	0x60
 
 XStatus i2cAD7414Write(u8 regAddr, u8 data);
 XStatus i2cAD7414Read(u8 regAddr, u8* dataPtr, u8 dataCount);
