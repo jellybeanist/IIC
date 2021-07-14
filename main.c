@@ -24,7 +24,6 @@ XStatus IIC_MCP4725_Write(u8 regAddr, u8 data0, u8 data1)
 	wrData[1] = data0;
 	wrData[2] = data1;
 
-	/* register write single byte */
 	if(XIic_Send(I2C_DEVICE_BASE_ADDR, MCP4725_DEV_ADDRESS, wrData, sizeof(wrData), XIIC_STOP) != sizeof(wrData))
 	{
 		return XST_FAILURE;
@@ -35,12 +34,10 @@ XStatus IIC_MCP4725_Write(u8 regAddr, u8 data0, u8 data1)
 
 XStatus IIC_MCP4725_Read(u8 regAddr, u8* dataPtr, u8 dataCount)
 {
-	/* register select */
 	if(XIic_Send(I2C_DEVICE_BASE_ADDR, MCP4725_DEV_ADDRESS, &regAddr, 2, XIIC_STOP) != 1)
 	{
 		return XST_FAILURE;
 	}
-	/* register read */
 	if(XIic_Recv(I2C_DEVICE_BASE_ADDR, MCP4725_DEV_ADDRESS, dataPtr, dataCount, XIIC_STOP) != dataCount)
 	{
 		return XST_FAILURE;
