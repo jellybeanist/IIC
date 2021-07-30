@@ -5,7 +5,7 @@
 #include <sleep.h>
 #include <inttypes.h>
 #include <stdint.h>
-
+// device slave addr, r/w,
 u32 temp=0;
 u32 adder=0;
 u32 right=0;
@@ -45,7 +45,7 @@ XStatus IIC_MCP4725_Write(u8 regAddr, u8 data0, u8 data1)
 XStatus IIC_MCP4725_Read(u8 regAddr, u8* dataPtr, u8 dataCount)
 {
 	/* register select */
-	if(XIic_Send(I2C_DEVICE_BASE_ADDR, MCP4725_DEV_ADDRESS, &regAddr, 2, XIIC_STOP) != 1)
+	if(XIic_Send(I2C_DEVICE_BASE_ADDR, MCP4725_DEV_ADDRESS, &regAddr, 1, XIIC_STOP) != 1)
 	{
 		return XST_FAILURE;
 	}
@@ -90,25 +90,97 @@ XStatus IIC_QMC5883_Read(u8 regAddr, u8* dataPtr, u8 dataCount)
 	return XST_SUCCESS;
 }
 
+
+XStatus IIC_MPU6050_Write(u8 regAddr, u8 data)
+{
+	u8 wrData[2];
+
+	wrData[0] = regAddr;
+	wrData[1] = data;
+
+	/* register write single byte */
+	if(XIic_Send(I2C_DEVICE_BASE_ADDR, MPU6050_DEV_ADDRESS, wrData, sizeof(wrData), XIIC_STOP) != sizeof(wrData))
+	{
+		return XST_FAILURE;
+	}
+	return XST_SUCCESS;
+}
+
+
+XStatus IIC_MPU6050_Read(u8 regAddr, u8* dataPtr, u8 dataCount)
+{
+	/* register select */
+	if(XIic_Send(I2C_DEVICE_BASE_ADDR, MPU6050_DEV_ADDRESS, &regAddr, 1, XIIC_STOP) != 1)
+	{
+		return XST_FAILURE;
+	}
+	/* register read */
+	if(XIic_Recv(I2C_DEVICE_BASE_ADDR, MPU6050_DEV_ADDRESS, dataPtr, dataCount, XIIC_STOP) != dataCount)
+	{
+		return XST_FAILURE;
+	}
+	return XST_SUCCESS;
+}
+
+
+
+XStatus IIC_PCF8574_Write(u8 regAddr, u8 data)
+{
+	u8 wrData[2];
+
+	wrData[0] = regAddr;
+	wrData[1] = data;
+
+	/* register write single byte */
+	if(XIic_Send(I2C_DEVICE_BASE_ADDR, PCF8574_DEV_ADDRESS, wrData, sizeof(wrData), XIIC_STOP) != sizeof(wrData))
+	{
+		return XST_FAILURE;
+	}
+	return XST_SUCCESS;
+}
+
+
+XStatus IIC_PCF8574_Read(u8 regAddr, u8* dataPtr, u8 dataCount)
+{
+	/* register select */
+	if(XIic_Send(I2C_DEVICE_BASE_ADDR, PCF8574_DEV_ADDRESS, &regAddr, 1, XIIC_STOP) != 1)
+	{
+		return XST_FAILURE;
+	}
+	/* register read */
+	if(XIic_Recv(I2C_DEVICE_BASE_ADDR, PCF8574_DEV_ADDRESS, dataPtr, dataCount, XIIC_STOP) != dataCount)
+	{
+		return XST_FAILURE;
+	}
+	return XST_SUCCESS;
+}
+
 int main(void)
 {
 	u8 datas[8];
 	CLK_DIV_BAUD[0] = 100000000/115200;
 	sleep(1);
+	IIC_MCP4725_Write(0x40,0x0F,0xFF);
 	// int counter=0;
 	// u8 voltageLow,voltageHigh=0x00;
-	//IIC_MCP4725_Write(0x40,0x00,0x00);
+	//IIC_MCP4725_Write(0x40,0x00,0x00);  //0F FF => 3.3V, second byte is for LSB.
 	while(1)
 	{
-		if (IIC_QMC5883_Read(0x00, datas, 8) == XST_FAILURE)
+		if  (IIC_PCF8574_Write(0x4E,0xCC) == XST_FAILURE)
+			//(IIC_MCP4725_Read(0x65,datas,2) == XST_FAILURE)
+			//(IIC_MCP4725_Write(0x40,0x0F,0xFF) == XST_FAILURE)
+			//(IIC_MPU6050_Read(0x42, datas, 1) == XST_FAILURE)
 		{
 			TX_BUF_DATA[0] = 0xAA;
 		}
 		else
 		{
-			for (int i= 0; i<8; i++)
-				TX_BUF_DATA[0] = datas[i];
+			//for (int i=0; i<2; i++)
+				//TX_BUF_DATA[0] = datas[0];
+			//TX_BUF_DATA[0] = datas[i];
+			TX_BUF_DATA[0] = 0xBB;
 		}
+
 		sleep(1);
 	}
 
